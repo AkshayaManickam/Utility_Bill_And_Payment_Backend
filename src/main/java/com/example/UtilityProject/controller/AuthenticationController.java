@@ -16,7 +16,7 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
 
-    @PostMapping("/generate-otp")
+    @PostMapping ("/generate-otp")
     public ResponseEntity<Map<String, String>> generateOtp(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         String otp = authenticationService.generateOtp(email);
