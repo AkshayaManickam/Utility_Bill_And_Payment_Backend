@@ -26,6 +26,10 @@ public class User {
     private String serviceConnectionNo;
 
     @NotNull
+    @Column(nullable = false)
+    private String Name;
+
+    @NotNull
     @Email
     @Column(nullable = false, unique = true)
     private String email;
@@ -49,6 +53,16 @@ public class User {
     private String startDate;
 
     // Getters and Setters
+
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
+        Name = name;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

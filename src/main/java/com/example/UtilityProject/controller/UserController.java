@@ -80,7 +80,7 @@ public class UserController {
             userRepository.saveAll(users);
 
             if (!skippedRecords.isEmpty()) {
-                response.put("message", "Bulk upload completed with some skipped records.");
+                response.put("message", "Bulk upload completed with some skipped rows");
                 response.put("skipped", skippedRecords);
                 return ResponseEntity.ok(response);  // ✅ Ensure response is always 200 OK
             } else {
@@ -92,6 +92,16 @@ public class UserController {
             response.put("message", "Error processing CSV file: " + e.getMessage());
             return ResponseEntity.status(500).body(response);  // ✅ Handle critical failures properly
         }
+    }
+
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+        return userService.updateUser(id, user);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
 
 }
