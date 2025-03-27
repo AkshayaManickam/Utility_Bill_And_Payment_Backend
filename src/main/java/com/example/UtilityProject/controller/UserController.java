@@ -51,6 +51,8 @@ public class UserController {
             return ResponseEntity.badRequest().body(response);
         }
 
+        System.out.println("Received file: " + file.getOriginalFilename()); // ✅ Debugging
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
             List<User> users = new ArrayList<>();
@@ -79,20 +81,17 @@ public class UserController {
 
             userRepository.saveAll(users);
 
-            if (!skippedRecords.isEmpty()) {
-                response.put("message", "Bulk upload completed with some skipped rows");
-                response.put("skipped", skippedRecords);
-                return ResponseEntity.ok(response);  // ✅ Ensure response is always 200 OK
-            } else {
-                response.put("message", "Bulk upload successful!");
-                return ResponseEntity.ok(response);  // ✅ Ensure success response
-            }
+            response.put("message", skippedRecords.isEmpty() ? "Bulk upload successful!" : "Bulk upload completed with some skipped rows");
+            response.put("skipped", skippedRecords);
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            System.err.println("Error processing file: " + e.getMessage()); // ✅ Debugging
             response.put("message", "Error processing CSV file: " + e.getMessage());
-            return ResponseEntity.status(500).body(response);  // ✅ Handle critical failures properly
+            return ResponseEntity.status(500).body(response);
         }
     }
+
 
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {

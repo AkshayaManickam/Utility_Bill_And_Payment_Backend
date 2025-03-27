@@ -27,7 +27,7 @@ public class User {
 
     @NotNull
     @Column(nullable = false)
-    private String Name;
+    private String name;
 
     @NotNull
     @Email
@@ -56,11 +56,11 @@ public class User {
 
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public Long getId() { return id; }
