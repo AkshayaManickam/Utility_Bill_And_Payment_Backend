@@ -62,6 +62,7 @@ public class UserController {
                 try {
                     User user = new User();
                     user.setCustomerId(record.get("customer_id"));
+                    user.setName(record.get("name"));
                     user.setServiceConnectionNo(record.get("service_connection_no"));
                     user.setEmail(record.get("email"));
                     user.setPhone(record.get("phone"));
