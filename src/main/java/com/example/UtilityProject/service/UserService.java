@@ -42,5 +42,9 @@ public class UserService {
             throw new RuntimeException("User not found with id: " + id);
         }
     }
+
+    public Optional<User> getCustomerDetails(String serviceConnectionNo) {
+        return userRepository.findByServiceConnectionNo(serviceConnectionNo);
+    }
 }
 
