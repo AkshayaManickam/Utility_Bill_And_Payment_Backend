@@ -4,10 +4,12 @@ import com.example.UtilityProject.model.Invoice;
 import com.example.UtilityProject.model.User;
 import com.example.UtilityProject.repository.InvoiceRepository;
 import com.example.UtilityProject.repository.UserRepository;
+import com.example.UtilityProject.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,22 +23,34 @@ public class InvoiceController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private InvoiceService invoiceService;
+
+    public InvoiceController(InvoiceRepository invoiceRepository, UserRepository userRepository) {
+        this.invoiceRepository = invoiceRepository;
+        this.userRepository = userRepository;
+    }
+
     @PostMapping("/save")
     public ResponseEntity<?> saveInvoice(@RequestBody Invoice invoice) {
-        if (invoice.getUser() == null || invoice.getUser().getId() == null) {
-            return ResponseEntity.badRequest().body("User ID is required");
-        }
-
-        // Fetch the user from the database
-        Optional<User> userOptional = userRepository.findById(invoice.getUser().getId());
+        // Fetch the user using serviceConnectionNumber
+        Optional<User> userOptional = userRepository.findByServiceConnectionNo(invoice.getServiceConnectionNumber());
         if (userOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid User ID");
+            return ResponseEntity.badRequest().body("Invalid Service Connection Number");
         }
 
-        invoice.setUser(userOptional.get()); // Set the fetched user
+        // Assign the fetched user to the invoice
+        invoice.setUser(userOptional.get());
+
+        // Save the invoice
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
         return ResponseEntity.ok(savedInvoice);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Invoice>> getAllInvoices() {
+        return ResponseEntity.ok(invoiceService.getAllInvoices());
     }
 
 }

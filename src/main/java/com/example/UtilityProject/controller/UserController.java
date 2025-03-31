@@ -104,10 +104,5 @@ public class UserController {
         userService.deleteUser(id);
     }
 
-    @GetMapping("/service/{serviceConnectionNo}")
-    public ResponseEntity<User> getCustomerDetails(@PathVariable String serviceConnectionNo) {
-        Optional<User> user = userService.getCustomerDetails(serviceConnectionNo);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
 
 }

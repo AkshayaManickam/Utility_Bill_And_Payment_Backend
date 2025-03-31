@@ -1,6 +1,7 @@
 package com.example.UtilityProject.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ public class Invoice {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_invoice_customer"))
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false)
@@ -47,7 +49,6 @@ public class Invoice {
     public void setIsPaid(String isPaid) {
         this.isPaid = isPaid;
     }
-    // Getters and Setters
 
     public Long getId() {
         return id;

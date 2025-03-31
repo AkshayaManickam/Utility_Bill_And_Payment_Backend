@@ -43,8 +43,5 @@ public class UserService {
         }
     }
 
-    public Optional<User> getCustomerDetails(String serviceConnectionNo) {
-        return userRepository.findByServiceConnectionNo(serviceConnectionNo);
-    }
 }
 
