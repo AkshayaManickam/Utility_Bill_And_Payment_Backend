@@ -109,5 +109,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserCount());
     }
 
+    @GetMapping("/consumption/{serviceConnectionNo}")
+    public ResponseEntity<Integer> getUnitsConsumed(@PathVariable String serviceConnectionNo) {
+        int unitsConsumed = userService.getUnitsConsumedByServiceConnectionNo(serviceConnectionNo);
+        return ResponseEntity.ok(unitsConsumed); // Return units consumed
+    }
+
 
 }

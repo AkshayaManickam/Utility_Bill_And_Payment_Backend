@@ -47,5 +47,17 @@ public class UserService {
         return userRepository.countUsers();
     }
 
+    public int getUnitsConsumedByServiceConnectionNo(String serviceConnectionNo) {
+        Optional<User> userOptional = userRepository.findByServiceConnectionNo(serviceConnectionNo);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return user.getUnitsConsumption(); // Return the units consumed
+        } else {
+            throw new RuntimeException("User with service connection number " + serviceConnectionNo + " not found.");
+        }
+    }
+
+
 }
 

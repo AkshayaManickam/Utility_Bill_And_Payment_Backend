@@ -38,13 +38,14 @@ public class InvoiceController {
         if (userOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid Service Connection Number");
         }
-
-        // Assign the fetched user to the invoice
         invoice.setUser(userOptional.get());
+        User user = userOptional.get();
+        user.setUnitsConsumption(user.getUnitsConsumption());
 
-        // Save the invoice
+        // Save the updated user
+        userRepository.save(user);
+        user.setUnitsConsumption(invoice.getUnitsConsumed());
         Invoice savedInvoice = invoiceRepository.save(invoice);
-
         return ResponseEntity.ok(savedInvoice);
     }
 
@@ -58,4 +59,16 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceService.getBillCount());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody Invoice updatedInvoice) {
+        System.out.println("Updating Invoice ID: " + id);
+        System.out.println("Received Data: " + updatedInvoice);
+
+        Invoice invoice = invoiceService.updateInvoice(id, updatedInvoice);
+        if (invoice != null) {
+            return ResponseEntity.ok(invoice);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

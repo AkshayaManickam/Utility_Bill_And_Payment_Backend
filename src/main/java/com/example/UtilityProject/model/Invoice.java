@@ -14,7 +14,7 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, length = 20)
     @NotBlank(message = "Service Connection Number is required")
     private String serviceConnectionNumber;
 
