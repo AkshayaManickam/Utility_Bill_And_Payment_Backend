@@ -43,5 +43,9 @@ public class UserService {
         }
     }
 
+    public long getUserCount() {
+        return userRepository.countUsers();
+    }
+
 }
 

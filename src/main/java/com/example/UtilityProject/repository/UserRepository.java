@@ -21,4 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByServiceConnectionNo(String serviceConnectionNo);
 
+    @Query("SELECT COUNT(u) FROM User u")
+    long countUsers();
+
 }

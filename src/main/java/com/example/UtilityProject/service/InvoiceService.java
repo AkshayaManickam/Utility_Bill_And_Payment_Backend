@@ -5,6 +5,7 @@ import com.example.UtilityProject.repository.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -15,5 +16,10 @@ public class InvoiceService {
 
     public List<Invoice> getAllInvoices() {
         return invoiceRepository.findAll();
+    }
+
+    public long getBillCount() {
+        LocalDate today = LocalDate.now();
+        return invoiceRepository.countBillsGeneratedToday(today);
     }
 }

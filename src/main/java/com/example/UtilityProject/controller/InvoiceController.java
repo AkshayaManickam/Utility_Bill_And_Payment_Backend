@@ -53,4 +53,9 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceService.getAllInvoices());
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> getBillCount() {
+        return ResponseEntity.ok(invoiceService.getBillCount());
+    }
+
 }

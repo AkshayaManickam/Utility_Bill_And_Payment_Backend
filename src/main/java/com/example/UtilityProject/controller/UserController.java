@@ -104,5 +104,10 @@ public class UserController {
         userService.deleteUser(id);
     }
 
+    @GetMapping()
+    public ResponseEntity<Long> getUserCount() {
+        return ResponseEntity.ok(userService.getUserCount());
+    }
+
 
 }
