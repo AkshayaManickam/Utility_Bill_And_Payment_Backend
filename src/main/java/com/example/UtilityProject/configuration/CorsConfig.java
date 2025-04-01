@@ -13,26 +13,13 @@ public class CorsConfig {
 
     @Bean
     public CorsFilter corsFilter() {
-        // CORS Configuration
         CorsConfiguration corsConfig = new CorsConfiguration();
-
-        // Allow specific origin
         corsConfig.setAllowedOrigins(List.of("http://localhost:4200"));  // Your Angular front-end URL
-
-        // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Allow any headers
         corsConfig.setAllowedHeaders(List.of("*"));
-
-        // Allow credentials (cookies, authentication headers, etc.)
         corsConfig.setAllowCredentials(true);
-
-        // Map the CORS configuration to all URL paths
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig); // Apply to all endpoints
-
-        // Return the CORS filter
         return new CorsFilter(source);
     }
 }

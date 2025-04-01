@@ -38,6 +38,9 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<User> addUser(@RequestBody User user) {
+        if (user.getCreditCardBalance() == 0) user.setCreditCardBalance(50000.0);
+        if (user.getDebitCardBalance() == 0) user.setDebitCardBalance(30000.0);
+        if (user.getWalletBalance() == 0) user.setWalletBalance(20000.0);
         User savedUser = userRepository.save(user);
         return ResponseEntity.ok(savedUser);
     }
@@ -69,6 +72,11 @@ public class UserController {
                     user.setAddress(record.get("address"));
                     user.setUnitsConsumption(Integer.parseInt(record.get("units_consumption")));
                     user.setStartDate(record.get("start_date"));
+
+                    user.setCreditCardBalance(50000.0);
+                    user.setDebitCardBalance(30000.0);
+                    user.setWalletBalance(20000.0);
+
 
                     if (!userRepository.existsByCustomerId(user.getCustomerId())) {
                         users.add(user);
