@@ -37,10 +37,8 @@ public class Invoice {
     @Column(nullable = false)
     private LocalDate dueDate;
 
-
-
     @Column(nullable = false, length = 10)
-    private String isPaid = "Not Paid"; // Default value
+    private String isPaid = "Not Paid";
 
     public String getIsPaid() {
         return isPaid;
