@@ -71,4 +71,9 @@ public class InvoiceController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/{invoiceId}")
+    public Invoice getInvoiceDetails(@PathVariable Long invoiceId) {
+        return invoiceService.getInvoiceDetails(invoiceId);
+    }
 }

@@ -18,4 +18,5 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     @Query("SELECT COUNT(i) FROM Invoice i WHERE CAST(i.billGeneratedDate AS date) = :date")
     long countBillsGeneratedToday(@Param("date") LocalDate date);
 
+
 }
