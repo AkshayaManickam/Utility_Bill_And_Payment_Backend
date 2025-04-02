@@ -50,4 +50,12 @@ public class InvoiceService {
         return invoiceRepository.findById(invoiceId).orElse(null);
     }
 
+    public Optional<Invoice> findById(Long id) {
+        return invoiceRepository.findById(id);
+    }
+
+    public Invoice saveInvoice(Invoice invoice) {
+        return invoiceRepository.save(invoice);
+    }
+
 }

@@ -12,7 +12,7 @@ public class Transaction {
     private Long transactionId;
 
     @ManyToOne
-    @JoinColumn(name = "invoice_id", nullable = false, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_transaction_invoice"))
+    @JoinColumn(name = "invoice_id", nullable = false, referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_transaction_invoice"),unique = true)
     private Invoice invoice;
 
     @Column(nullable = false)
