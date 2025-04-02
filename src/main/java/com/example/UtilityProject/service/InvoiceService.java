@@ -46,4 +46,8 @@ public class InvoiceService {
         return invoice.orElse(null);  // Return null if invoice is not found
     }
 
+    public Invoice getInvoiceById(Long invoiceId) {
+        return invoiceRepository.findById(invoiceId).orElse(null);
+    }
+
 }
