@@ -1,4 +1,4 @@
-package com.example.UtilityProject.service;
+package com.example.UtilityProject.service.Discount;
 
 import com.example.UtilityProject.model.AuthenticationDetails;
 import com.example.UtilityProject.model.Employee;

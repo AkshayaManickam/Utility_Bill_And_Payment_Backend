@@ -1,4 +1,4 @@
-package com.example.UtilityProject.service;
+package com.example.UtilityProject.service.Discount;
 
 
 import org.springframework.stereotype.Component;

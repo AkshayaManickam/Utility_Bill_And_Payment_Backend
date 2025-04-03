@@ -1,9 +1,11 @@
 package com.example.UtilityProject.controller;
 
 import com.example.UtilityProject.model.Invoice;
+import com.example.UtilityProject.model.Payment;
 import com.example.UtilityProject.model.PaymentMethod;
 import com.example.UtilityProject.model.Transaction;
 import com.example.UtilityProject.service.InvoiceService;
+import com.example.UtilityProject.service.PaymentService;
 import com.example.UtilityProject.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,9 @@ public class TransactionController {
     @Autowired
     private InvoiceService invoiceService;
 
+    @Autowired
+    private PaymentService paymentService;
+
     @GetMapping
     public ResponseEntity<List<Transaction>> getAllTransactions() {
         return ResponseEntity.ok(transactionService.getAllTransactions());
@@ -40,9 +45,14 @@ public class TransactionController {
         transaction.setTransactionStatus("SUCCESS");
         transaction.setTransactionDate(LocalDateTime.now());
         Transaction savedTransaction = transactionService.saveTransaction(transaction);
+
+        Payment payment = new Payment();
+        payment.setInvoiceId(invoice.getId());
+        payment.setUserId(invoice.getUser().getId());
+        payment.setAmountPaid(transaction.getAmountPaid());
+        payment.setPaymentMethod(transaction.getPaymentMethod().toString());
+        payment.setPaymentDate(LocalDateTime.now());
+        paymentService.savePayment(payment);
         return ResponseEntity.ok(savedTransaction);
     }
-
-
-
 }

@@ -1,7 +1,7 @@
 package com.example.UtilityProject.controller;
 
 import com.example.UtilityProject.model.Invoice;
-import com.example.UtilityProject.service.DiscountContext;
+import com.example.UtilityProject.service.Discount.DiscountContext;
 import com.example.UtilityProject.service.InvoiceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

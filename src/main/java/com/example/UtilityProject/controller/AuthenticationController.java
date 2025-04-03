@@ -1,6 +1,6 @@
 package com.example.UtilityProject.controller;
 
-import com.example.UtilityProject.service.AuthenticationService;
+import com.example.UtilityProject.service.Discount.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

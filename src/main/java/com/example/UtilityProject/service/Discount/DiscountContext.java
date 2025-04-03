@@ -1,4 +1,4 @@
-package com.example.UtilityProject.service;
+package com.example.UtilityProject.service.Discount;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
