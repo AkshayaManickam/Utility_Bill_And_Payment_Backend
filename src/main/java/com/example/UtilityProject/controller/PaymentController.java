@@ -3,6 +3,8 @@ package com.example.UtilityProject.controller;
 import com.example.UtilityProject.model.Invoice;
 import com.example.UtilityProject.service.Discount.DiscountContext;
 import com.example.UtilityProject.service.InvoiceService;
+import com.example.UtilityProject.service.PaymentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,9 @@ public class PaymentController {
         this.invoiceService = invoiceService;
     }
 
+    @Autowired
+    private PaymentService paymentService;
+
     @GetMapping("/calculate")
     public ResponseEntity<Double> calculatePayment(@RequestParam Long invoiceId, @RequestParam String discountType) {
         try {
@@ -33,6 +38,11 @@ public class PaymentController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+    }
+
+    @GetMapping("/today-amount")
+    public Double getTodayAmountReceived() {
+        return paymentService.getTodayAmountReceived();
     }
 
 }

@@ -17,4 +17,8 @@ public class PaymentService {
     public Payment savePayment(Payment payment) {
         return paymentRepository.save(payment);
     }
+
+    public Double getTodayAmountReceived() {
+        return paymentRepository.getTotalAmountReceivedToday();
+    }
 }
