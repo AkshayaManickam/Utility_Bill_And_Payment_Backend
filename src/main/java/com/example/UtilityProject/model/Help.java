@@ -30,7 +30,19 @@ public class Help {
     private String oldValue;  // Stores old value (if applicable)
 
     @Column(nullable = true)
-    private String newValue;  // Stores new value (if applicable)
+    private String newValue;
+
+    @Column(name = "assigned_to")
+    private String assignedTo;
+
+    public String getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
 
     public Help(Long id, String userMail, String query, Status status, String oldValue, String newValue) {
         this.id = id;

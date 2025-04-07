@@ -27,6 +27,9 @@ public class Employee {
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
 
+    @Column(name = "location", nullable = false)
+    private String location;
+
     public Employee(Long id, String employeeId, String name, String email, String phone) {
         this.id = id;
         this.employeeId = employeeId;
@@ -36,6 +39,15 @@ public class Employee {
     }
 
     public Employee() {
+    }
+
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public Long getId() {
