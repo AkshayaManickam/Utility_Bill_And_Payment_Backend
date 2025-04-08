@@ -2,11 +2,8 @@ package com.example.UtilityProject.controller;
 
 
 import com.example.UtilityProject.model.Employee;
-import com.example.UtilityProject.model.User;
 import com.example.UtilityProject.repository.EmployeeRepository;
-import com.example.UtilityProject.repository.UserRepository;
 import com.example.UtilityProject.service.EmployeeService;
-import com.example.UtilityProject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

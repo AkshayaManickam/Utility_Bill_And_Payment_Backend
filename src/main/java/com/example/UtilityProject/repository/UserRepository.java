@@ -14,15 +14,9 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT DISTINCT u FROM User u")
     List<User> findDistinctUsers();
-
-    // Check if a customer exists by customerId
     boolean existsByCustomerId(String customerId);
-
-    // Check if a customer exists by email
     boolean existsByEmail(String email);
-
     Optional<User> findByServiceConnectionNo(String serviceConnectionNo);
-
     @Query("SELECT COUNT(u) FROM User u")
     long countUsers();
 }

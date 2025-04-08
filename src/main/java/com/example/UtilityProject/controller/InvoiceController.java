@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,21 +34,26 @@ public class InvoiceController {
 
     @PostMapping("/save")
     public ResponseEntity<?> saveInvoice(@RequestBody Invoice invoice) {
-        // Fetch the user using serviceConnectionNumber
         Optional<User> userOptional = userRepository.findByServiceConnectionNo(invoice.getServiceConnectionNumber());
         if (userOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid Service Connection Number");
         }
-        invoice.setUser(userOptional.get());
         User user = userOptional.get();
-        user.setUnitsConsumption(user.getUnitsConsumption());
-
-        // Save the updated user
-        userRepository.save(user);
+        Long userId = user.getId();
+        LocalDate billDate = invoice.getBillGeneratedDate();
+        int month = billDate.getMonthValue();
+        int year = billDate.getYear();
+        List<Invoice> existingInvoices = invoiceRepository.findByUserIdAndMonthAndYear(userId, month, year);
+        if (!existingInvoices.isEmpty()) {
+            return ResponseEntity.badRequest().body("Bill already generated for this user this month.");
+        }
         user.setUnitsConsumption(invoice.getUnitsConsumed());
+        userRepository.save(user);
+        invoice.setUser(user);
         Invoice savedInvoice = invoiceRepository.save(invoice);
         return ResponseEntity.ok(savedInvoice);
     }
+
 
     @GetMapping
     public ResponseEntity<List<Invoice>> getAllInvoices() {

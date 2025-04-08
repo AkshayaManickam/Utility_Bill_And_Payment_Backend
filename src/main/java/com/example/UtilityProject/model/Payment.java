@@ -103,6 +103,5 @@ public class Payment {
         this.user = user;
     }
 
-    // Getters and Setters
 }
 

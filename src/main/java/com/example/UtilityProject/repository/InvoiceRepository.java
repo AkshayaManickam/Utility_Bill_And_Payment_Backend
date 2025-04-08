@@ -18,5 +18,10 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     @Query("SELECT COUNT(i) FROM Invoice i WHERE CAST(i.billGeneratedDate AS date) = :date")
     long countBillsGeneratedToday(@Param("date") LocalDate date);
 
+    @Query("SELECT i FROM Invoice i WHERE i.user.id = :userId AND FUNCTION('MONTH', i.billGeneratedDate) = :month AND FUNCTION('YEAR', i.billGeneratedDate) = :year")
+    List<Invoice> findByUserIdAndMonthAndYear(@Param("userId") Long userId,
+                                              @Param("month") int month,
+                                              @Param("year") int year);
+
 
 }
