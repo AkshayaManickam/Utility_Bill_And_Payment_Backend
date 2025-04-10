@@ -2,8 +2,7 @@ package com.example.UtilityProject.controller;
 
 import com.example.UtilityProject.model.Employee;
 import com.example.UtilityProject.repository.EmployeeRepository;
-import com.example.UtilityProject.service.Discount.AuthenticationService;
-import com.example.UtilityProject.service.EmployeeService;
+import com.example.UtilityProject.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,7 @@ import java.util.Optional;
 public class AuthenticationController {
 
     @Autowired
-    private AuthenticationService authenticationService;
+    private InvoiceService.AuthenticationService authenticationService;
 
     @Autowired
     private EmployeeRepository employeeRepository;

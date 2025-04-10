@@ -16,7 +16,7 @@ public class Help {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)  // ✅ Make userMail unique
+    @Column(nullable = false)
     private String userMail;
 
     @Column(nullable = false)
@@ -24,7 +24,7 @@ public class Help {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status; // SENT, RECEIVED, IN PROGRESS, COMPLETED
+    private Status status;
 
     @Column(nullable = true)
     private String oldValue;  // Stores old value (if applicable)
@@ -32,15 +32,16 @@ public class Help {
     @Column(nullable = true)
     private String newValue;
 
-    @Column(name = "assigned_to")
-    private String assignedTo;
+    @Column(columnDefinition = "TEXT") // For longer description
+    private String description;
 
-    public String getAssignedTo() {
-        return assignedTo;
+
+    public String getDescription() {
+        return description;
     }
 
-    public void setAssignedTo(String assignedTo) {
-        this.assignedTo = assignedTo;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 
