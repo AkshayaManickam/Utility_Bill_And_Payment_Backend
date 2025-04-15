@@ -13,14 +13,25 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AuditLogService auditLogService;
+
     public List<User> getUniqueUsers() {
         return userRepository.findDistinctUsers();
     }
 
-    public User updateUser(Long id, User userDetails) {
+    public User updateUser(Long id, User userDetails, String employeeEmail) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
+            String oldValue = String.format(
+                    "Name: %s, Email: %s, Phone: %s, Address: %s, Units: %s",
+                    existingUser.getName(),
+                    existingUser.getEmail(),
+                    existingUser.getPhone(),
+                    existingUser.getAddress(),
+                    existingUser.getUnitsConsumption()
+            );
             existingUser.setCustomerId(userDetails.getCustomerId());
             existingUser.setServiceConnectionNo(userDetails.getServiceConnectionNo());
             existingUser.setName(userDetails.getName());
@@ -29,15 +40,53 @@ public class UserService {
             existingUser.setAddress(userDetails.getAddress());
             existingUser.setUnitsConsumption(userDetails.getUnitsConsumption());
             existingUser.setStartDate(userDetails.getStartDate());
-            return userRepository.save(existingUser);
+
+            User savedUser = userRepository.save(existingUser);
+            String newValue = String.format(
+                    "Name: %s, Email: %s, Phone: %s, Address: %s, Units: %s",
+                    savedUser.getName(),
+                    savedUser.getEmail(),
+                    savedUser.getPhone(),
+                    savedUser.getAddress(),
+                    savedUser.getUnitsConsumption()
+            );
+
+            auditLogService.logWithValues(
+                    employeeEmail,
+                    "UPDATE_USER",
+                    "USER_ID: " + savedUser.getCustomerId(),
+                    oldValue,
+                    newValue,
+                    "Updated user profile."
+            );
+
+            return savedUser;
         } else {
             throw new RuntimeException("User not found with id " + id);
         }
     }
 
-    public void deleteUser(Long id) {
-        if (userRepository.existsById(id)) {
+    public void deleteUser(Long id, String employeeEmail) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            StringBuilder oldValues = new StringBuilder();
+            oldValues.append("CustomerId: ").append(user.getCustomerId()).append(", ");
+            oldValues.append("ServiceConnectionNo: ").append(user.getServiceConnectionNo()).append(", ");
+            oldValues.append("Name: ").append(user.getName()).append(", ");
+            oldValues.append("Email: ").append(user.getEmail()).append(", ");
+            oldValues.append("Phone: ").append(user.getPhone()).append(", ");
+            oldValues.append("Address: ").append(user.getAddress()).append(", ");
+            oldValues.append("StartDate: ").append(user.getStartDate()).append(", ");
+            oldValues.append("UnitsConsumption: ").append(user.getUnitsConsumption());
             userRepository.deleteById(id);
+            auditLogService.log(
+                    employeeEmail,
+                    "DELETE_USER",
+                    "USER_ID: " + user.getCustomerId(),
+                    "Deleted Values => [" + oldValues + "]"
+            );
+
         } else {
             throw new RuntimeException("User not found with id: " + id);
         }
@@ -52,7 +101,7 @@ public class UserService {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            return user.getUnitsConsumption(); // Return the units consumed
+            return user.getUnitsConsumption();
         } else {
             throw new RuntimeException("User with service connection number " + serviceConnectionNo + " not found.");
         }

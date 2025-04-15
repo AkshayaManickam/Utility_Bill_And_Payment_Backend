@@ -1,15 +1,20 @@
 package com.example.UtilityProject.controller;
 
+import com.example.UtilityProject.model.AuditLog;
 import com.example.UtilityProject.model.Invoice;
 import com.example.UtilityProject.model.User;
+import com.example.UtilityProject.repository.AuditLogRepository;
 import com.example.UtilityProject.repository.InvoiceRepository;
 import com.example.UtilityProject.repository.UserRepository;
 import com.example.UtilityProject.service.InvoiceService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +30,13 @@ public class InvoiceController {
     private UserRepository userRepository;
 
     @Autowired
+    private AuditLogRepository auditLogRepository;
+
+    @Autowired
     private InvoiceService invoiceService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public InvoiceController(InvoiceRepository invoiceRepository, UserRepository userRepository) {
         this.invoiceRepository = invoiceRepository;
@@ -33,7 +44,9 @@ public class InvoiceController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveInvoice(@RequestBody Invoice invoice) {
+    public ResponseEntity<?> saveInvoice(
+            @RequestBody Invoice invoice,
+            @RequestParam("loggedInEmpId") String loggedInEmpId) throws JsonProcessingException {
         Optional<User> userOptional = userRepository.findByServiceConnectionNo(invoice.getServiceConnectionNumber());
         if (userOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid Service Connection Number");
@@ -54,9 +67,21 @@ public class InvoiceController {
         userRepository.save(user);
         invoice.setUser(user);
         Invoice savedInvoice = invoiceRepository.save(invoice);
+        ObjectMapper mapper = new ObjectMapper();
+        String newValue = objectMapper.writeValueAsString(savedInvoice);
+        AuditLog auditLog = AuditLog.builder()
+                .actor(loggedInEmpId)
+                .action("CREATE_INVOICE")
+                .target("Invoice-" + savedInvoice.getId())
+                .newValue(newValue)
+                .oldValue(null)
+                .details("New invoice generated for user ID: " + userId)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        auditLogRepository.save(auditLog);
         return ResponseEntity.ok(savedInvoice);
     }
-
 
     @GetMapping
     public ResponseEntity<List<Invoice>> getAllInvoices() {
@@ -69,16 +94,27 @@ public class InvoiceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody Invoice updatedInvoice) {
-        System.out.println("Updating Invoice ID: " + id);
-        System.out.println("Received Data: " + updatedInvoice);
-
-        Invoice invoice = invoiceService.updateInvoice(id, updatedInvoice);
-        if (invoice != null) {
-            return ResponseEntity.ok(invoice);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public Invoice updateInvoice(
+            @PathVariable Long id,
+            @RequestBody Invoice updatedInvoice,
+            @RequestParam("loggedInEmpId") String loggedInEmpId) throws JsonProcessingException {
+        //ObjectMapper mapper = new ObjectMapper();
+        Invoice oldInvoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Invoice not found with id " + id));
+        String oldValueJson = objectMapper.writeValueAsString(oldInvoice);
+        Invoice savedInvoice = invoiceService.updateInvoice(id, updatedInvoice);
+        String newValueJson = objectMapper.writeValueAsString(savedInvoice);
+        AuditLog auditLog = AuditLog.builder()
+                .actor(loggedInEmpId)
+                .action("UPDATE_INVOICE")
+                .target(savedInvoice.getId().toString())
+                .oldValue(oldValueJson)
+                .newValue(newValueJson)
+                .details("Invoice updated successfully")
+                .timestamp(LocalDateTime.now())
+                .build();
+        auditLogRepository.save(auditLog);
+        return savedInvoice;
     }
 
     @GetMapping("/{invoiceId}")
