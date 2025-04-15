@@ -60,7 +60,7 @@ public class InvoiceController {
         if (!existingInvoices.isEmpty()) {
             return ResponseEntity.badRequest().body("Bill already generated for this user this month.");
         }
-        if (invoice.getUnitsConsumed() == 0 && invoice.getTotalAmount() == 0) {
+        if (invoice.getTotalAmount() == 0) {
             invoice.setIsPaid("EXCEPTION");
         }
         user.setUnitsConsumption(invoice.getUnitsConsumed());
