@@ -27,7 +27,6 @@ public class AuthenticationController {
     private AuditLogService auditLogService;
 
 
-
     @PostMapping ("/generate-otp")
     public ResponseEntity<Map<String, String>> generateOtp(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -35,7 +34,7 @@ public class AuthenticationController {
 
         Map<String, String> response = new HashMap<>();
         response.put("message", otp.equals("Email does not exist!") ? otp : "OTP Sent Successfully");
-        response.put("otp", otp); // For development (Remove in production)
+        response.put("otp", otp);
         return ResponseEntity.ok(response);
     }
 
@@ -46,10 +45,8 @@ public class AuthenticationController {
         boolean isValid = authenticationService.verifyOtp(email, otp);
         Map<String, Object> response = new HashMap<>();
         response.put("valid", isValid);
-
         if (isValid) {
             Optional<Employee> employeeOpt = employeeRepository.findByEmail(email);
-
             employeeOpt.ifPresent(emp -> {
                 response.put("employeeId", emp.getEmployeeId());
                 auditLogService.log(
