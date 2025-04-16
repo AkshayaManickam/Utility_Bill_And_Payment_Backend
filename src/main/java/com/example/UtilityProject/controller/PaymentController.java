@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/payment")
-@CrossOrigin(origins = "*") // Allow frontend to access backend
+@CrossOrigin(origins = "*")
 public class PaymentController {
 
     private final DiscountContext discountContext;
