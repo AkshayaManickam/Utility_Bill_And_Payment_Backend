@@ -3,6 +3,7 @@ package com.example.UtilityProject.controller;
 import com.example.UtilityProject.model.Employee;
 import com.example.UtilityProject.repository.EmployeeRepository;
 import com.example.UtilityProject.service.AuditLogService;
+import com.example.UtilityProject.service.AuthenticationService;
 import com.example.UtilityProject.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class AuthenticationController {
 
     @Autowired
-    private InvoiceService.AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -62,6 +63,5 @@ public class AuthenticationController {
         }
         return ResponseEntity.ok(response);
     }
-
 }
 
