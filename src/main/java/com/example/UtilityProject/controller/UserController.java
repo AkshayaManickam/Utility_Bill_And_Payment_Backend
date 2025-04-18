@@ -23,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin("*")  // Allow frontend requests
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 public class UserController {
     @Autowired
     private UserService userService;
