@@ -75,7 +75,6 @@ public class AuthenticationController {
                 response.put("sessionId", session.getId());
                 session.setAttribute("email", email);  // Store email in the session
 
-                // Create Authentication
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 email,
