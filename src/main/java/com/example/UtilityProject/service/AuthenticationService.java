@@ -10,9 +10,7 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class AuthenticationService {
@@ -28,17 +26,17 @@ public class AuthenticationService {
 
     private final Random random = new Random();
 
-    // Generate OTP if user is not logged in
-    public String generateOtp(String email) {
+    public Map<String, String> generateOtp(String email) {
         Optional<Employee> employee = employeeRepository.findByEmail(email);
 
+        Map<String, String> response = new HashMap<>();
+
         if (employee.isEmpty()) {
-            return "Email does not exist!";
+            response.put("message", "Email does not exist!");
+            return response; // Return response with error message
         }
 
-        if (hasActiveSession(email)) {
-            return "User already logged in. Cannot generate OTP.";
-        }
+        boolean hadActiveSession = expireExistingSessions(email);
 
         String otp = String.valueOf(100000 + random.nextInt(900000)); // Generate 6-digit OTP
 
@@ -49,10 +47,42 @@ public class AuthenticationService {
         authDetails.setExpiresAt(LocalDateTime.now().plusMinutes(5)); // OTP valid for 5 minutes
 
         authenticationRepository.save(authDetails);
-        return otp;
+
+        if (hadActiveSession) {
+            response.put("message", "Previous session cleared. New OTP generated.");
+        } else {
+            response.put("message", "OTP generated successfully.");
+        }
+        response.put("otp", otp);
+
+        return response;
     }
 
-    // Verify OTP - Returns true if valid and not expired
+
+
+    // Expire existing sessions of the user
+    private boolean expireExistingSessions(String email) {
+        boolean hadActiveSession = false;
+        List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
+
+        for (Object principal : allPrincipals) {
+            if (principal instanceof String) {
+                String loggedInEmail = (String) principal;
+                if (loggedInEmail.equalsIgnoreCase(email)) {
+                    List<SessionInformation> sessions = sessionRegistry.getAllSessions(principal, false);
+                    if (sessions != null) {
+                        for (SessionInformation sessionInfo : sessions) {
+                            sessionInfo.expireNow(); // Expire the old session
+                            hadActiveSession = true;
+                        }
+                    }
+                }
+            }
+        }
+        return hadActiveSession;
+    }
+
+
     public boolean verifyOtp(String email, String otp) {
         Optional<AuthenticationDetails> authDetails = authenticationRepository.findByEmailAndOtp(email, otp);
 

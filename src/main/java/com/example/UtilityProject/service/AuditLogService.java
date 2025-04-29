@@ -3,9 +3,11 @@ package com.example.UtilityProject.service;
 import com.example.UtilityProject.model.AuditLog;
 import com.example.UtilityProject.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,4 +42,11 @@ public class AuditLogService {
                 .build();
         auditLogRepository.save(log);
     }
+
+
+    public List<AuditLog> getLogsByTarget(String target) {
+        return auditLogRepository.findByTargetContaining(target);
+    }
+
+
 }

@@ -17,7 +17,8 @@ public class UserService {
     private AuditLogService auditLogService;
 
     public List<User> getUniqueUsers() {
-        return userRepository.findDistinctUsers();
+        // Fetch only users who are not deleted
+        return userRepository.findByIsDeletedFalse();
     }
 
     public User updateUser(Long id, User userDetails, String employeeEmail) {
@@ -79,21 +80,23 @@ public class UserService {
             oldValues.append("Address: ").append(user.getAddress()).append(", ");
             oldValues.append("StartDate: ").append(user.getStartDate()).append(", ");
             oldValues.append("UnitsConsumption: ").append(user.getUnitsConsumption());
-            userRepository.deleteById(id);
+            user.setDeleted(true);
+            userRepository.save(user);
             auditLogService.log(
                     employeeEmail,
                     "DELETE_USER",
                     "USER_ID: " + user.getCustomerId(),
                     "Deleted Values => [" + oldValues + "]"
             );
-
         } else {
             throw new RuntimeException("User not found with id: " + id);
         }
     }
 
-    public long getUserCount() {
-        return userRepository.countUsers();
+
+    public Long getUserCount() {
+        List<User> activeUsers = userRepository.findByIsDeletedFalse();
+        return (long) activeUsers.size();
     }
 
     public int getUnitsConsumedByServiceConnectionNo(String serviceConnectionNo) {

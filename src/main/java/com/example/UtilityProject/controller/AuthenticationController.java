@@ -40,23 +40,17 @@ public class AuthenticationController {
     @PostMapping("/generate-otp")
     public ResponseEntity<Map<String, String>> generateOtp(@RequestBody Map<String, String> request) {
         String email = request.get("email");
-        String otp = authenticationService.generateOtp(email);
-        Map<String, String> response = new HashMap<>();
-
-        if (otp.equals("Email does not exist!")) {
-            response.put("message", otp);
+        Map<String, String> response = authenticationService.generateOtp(email);
+        if (response.get("message").equals("Email does not exist!")) {
             return ResponseEntity.badRequest().body(response);
         }
-
-        if (otp.equals("User already logged in. Cannot generate OTP.")) {
-            response.put("message", "User already has an active session.");
-            return ResponseEntity.status(409).body(response); // << Show toastr from Angular
+        if (response.get("message").equals("User already logged in. Cannot generate OTP.")) {
+            return ResponseEntity.status(409).body(response);
         }
-
-        response.put("message", "OTP Sent Successfully");
-        response.put("otp", otp); // Only for development
         return ResponseEntity.ok(response);
     }
+
+
 
     @PostMapping("/verify-otp")
     public ResponseEntity<Map<String, Object>> verifyOtp(@RequestBody Map<String, String> request,
@@ -130,15 +124,15 @@ public class AuthenticationController {
     public ResponseEntity<Map<String, Object>> sessionStatus(HttpSession session) {
         Map<String, Object> response = new HashMap<>();
 
-        String email = (String) session.getAttribute("email");
-
-        if (email != null) {
-            response.put("isLoggedIn", true);
-            response.put("email", email);
-        } else {
-            response.put("isLoggedIn", false);
+        if (session == null || session.getAttribute("email") == null) {
+            return ResponseEntity.status(401).build(); // << IMPORTANT: throw 401 if expired
         }
+
+        String email = (String) session.getAttribute("email");
+        response.put("isLoggedIn", true);
+        response.put("email", email);
 
         return ResponseEntity.ok(response);
     }
+
 }

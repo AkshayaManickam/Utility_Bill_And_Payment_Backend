@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()  // Allow public endpoints for login, OTP, etc.
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(sessionValidationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -46,16 +46,18 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200"));  // Allow Angular to make requests
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));  // Allow all common HTTP methods
-        config.setAllowedHeaders(List.of("*", "X-Session-Id"));  // Allow all headers and specifically "X-Session-Id"
-        config.setAllowCredentials(true);  // Allow sending credentials (cookies, headers, etc.)
+        config.setAllowedOrigins(List.of("http://localhost:4200")); // or use .addAllowedOrigin("*") for all
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*")); // "*" will include X-Session-Id if allowed
+        config.setExposedHeaders(List.of("X-Session-Id")); // Allow client to read it from the response
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L); // Cache preflight for 1 hour
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);  // Apply the config globally to all endpoints
-
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 
 
     @Bean

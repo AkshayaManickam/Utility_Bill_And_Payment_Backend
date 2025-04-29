@@ -15,7 +15,7 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
 
     public List<Employee> getUniqueEmployees() {
-        return employeeRepository.findDistinctEmployees();
+        return employeeRepository.findByIsDeletedFalse();
     }
 
     public Employee updateEmployee(Long id, Employee employee) {

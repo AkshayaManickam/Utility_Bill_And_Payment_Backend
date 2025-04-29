@@ -73,7 +73,16 @@ public class User {
     @Column(nullable = false)
     private double walletBalance = 20000.0;
 
-    // Getters and Setters
+    @Column(nullable = false)
+    private boolean isDeleted = false;
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

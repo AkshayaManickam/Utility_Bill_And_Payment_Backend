@@ -37,28 +37,50 @@ public class UserController {
     @Autowired
     private AuditLogService auditLogService;
 
-    @GetMapping("/all")
+    @GetMapping("/all-users")
     public ResponseEntity<List<User>> getUniqueUsers() {
         return ResponseEntity.ok(userService.getUniqueUsers());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<User> addUser(
+    @PostMapping("/add-user")
+    public ResponseEntity<?> addUser(
             @RequestBody User user,
             @RequestHeader("X-EMPLOYEE-EMAIL") String employeeEmail
     ) {
+        Optional<User> existingByEmail = userRepository.findByEmail(user.getEmail());
+        Optional<User> existingByPhone = userRepository.findByPhone(user.getPhone());
+
+        if (existingByEmail.isPresent() && existingByEmail.get().isDeleted()) {
+            return ResponseEntity.badRequest().body(
+                    Collections.singletonMap("message", "A customer with this email was previously deleted. Cannot reuse email.")
+            );
+        }
+
+        if (existingByPhone.isPresent() && existingByPhone.get().isDeleted()) {
+            return ResponseEntity.badRequest().body(
+                    Collections.singletonMap("message", "A customer with this phone number was previously deleted. Cannot reuse phone number.")
+            );
+        }
+
+        // Step 2: Set initial balances
         if (user.getCreditCardBalance() == 0) user.setCreditCardBalance(50000.0);
         if (user.getDebitCardBalance() == 0) user.setDebitCardBalance(30000.0);
         if (user.getWalletBalance() == 0) user.setWalletBalance(20000.0);
+
+        // Step 3: Save the user
         User savedUser = userRepository.save(user);
+
+        // Step 4: Audit
         auditLogService.log(
                 employeeEmail,
                 "ADD_USER",
                 "USER_ID: " + savedUser.getCustomerId(),
                 "User added with initial balances"
         );
+
         return ResponseEntity.ok(savedUser);
     }
+
 
 
 
@@ -152,10 +174,10 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id, @RequestHeader("X-EMPLOYEE-EMAIL") String employeeEmail) {
         userService.deleteUser(id, employeeEmail);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();  // HTTP 204 No Content
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Long> getUserCount() {
         return ResponseEntity.ok(userService.getUserCount());
     }

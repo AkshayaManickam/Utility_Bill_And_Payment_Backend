@@ -28,15 +28,27 @@ public class Employee {
     private String phone;
 
 
-    public Employee(Long id, String employeeId, String name, String email, String phone) {
+    @Column(nullable = false)
+    private boolean isDeleted = false;
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public Employee() {
+    }
+
+    public Employee(Long id, String employeeId, String name, String email, String phone, boolean isDeleted) {
         this.id = id;
         this.employeeId = employeeId;
         this.name = name;
         this.email = email;
         this.phone = phone;
-    }
-
-    public Employee() {
+        this.isDeleted = isDeleted;
     }
 
     public Long getId() {

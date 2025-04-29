@@ -16,6 +16,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("SELECT DISTINCT u FROM Employee u")
     List<Employee> findDistinctEmployees();
 
-
     boolean existsByEmail(String email);
+    List<Employee> findByIsDeletedFalse();
 }
